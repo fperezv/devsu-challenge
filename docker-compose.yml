@@ -1,0 +1,49 @@
+services:
+
+  devsu-database:
+    container_name: devsu-database
+    image: mysql:5
+    environment:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      MYSQL_ROOT_PASSWORD: devsu-database
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - devsu-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      interval: 5s
+      retries: 5
+
+  devsu-user:
+    container_name: devsu-user
+    build:
+      dockerfile: Dockerfile
+      context: ./devsu-challenge-user
+    ports:
+      - "8080:8080"
+    networks:
+      - devsu-network
+    depends_on:
+      devsu-database:
+        condition: service_healthy
+
+  devsu-account:
+    container_name: devsu-account
+    build:
+      dockerfile: Dockerfile
+      context: ./devsu-challenge-account
+    ports:
+      - "8090:8090"
+    networks:
+      - devsu-network
+    depends_on:
+      devsu-database:
+        condition: service_healthy
+
+networks:
+  devsu-network:
+    name: devsu-network

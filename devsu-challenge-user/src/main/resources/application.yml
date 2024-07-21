@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: devsu-challenge-user
+  datasource:
+    url: jdbc:mysql://devsu-database:3306/devsu_challenge
+    username: root
+    password: devsu-database
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
